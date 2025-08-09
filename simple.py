@@ -185,7 +185,8 @@ class SimpleCronScheduler:
         print(f"Added: {url}")
     
     def load_sites_from_env(self):
-        """Load sites from .env file"""
+        """Load sites from .env file or environment variables"""
+        # First try .env file
         if os.path.exists('.env'):
             with open('.env', 'r') as f:
                 for line in f:
@@ -195,11 +196,14 @@ class SimpleCronScheduler:
                             key, value = line.split('=', 1)
                             if key.startswith('SITE'):
                                 self.add_site(value)
-        else:
-            # Load from environment variables
-            for key, value in os.environ.items():
-                if key.startswith('SITE'):
-                    self.add_site(value)
+        
+        # Also load from environment variables (Render uses these)
+        for key, value in os.environ.items():
+            if key.startswith('SITE'):
+                self.add_site(value)
+        
+        if not self.sites:
+            print("No sites found! Add SITE1, SITE2, etc. as environment variables.")
     
     def ping_sites(self):
         """Ping all sites"""
