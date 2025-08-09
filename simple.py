@@ -90,6 +90,13 @@ class SimpleCronScheduler:
         self.jobs = []
         self.running = False
     
+    def add_site(self, url):
+        """Add a site to ping"""
+        if not url.startswith('http'):
+            url = 'https://' + url
+        self.sites.append(url)
+        print(f"Added: {url}")
+    
     def load_sites_from_env(self):
         """Load sites from .env file"""
         if os.path.exists('.env'):
@@ -103,11 +110,6 @@ class SimpleCronScheduler:
                                 self.add_site(value)
         else:
             print("No .env file found. Create one with SITE1=url, SITE2=url, etc.")
-        """Add a site to ping"""
-        if not url.startswith('http'):
-            url = 'https://' + url
-        self.sites.append(url)
-        print(f"Added: {url}")
     
     def ping_sites(self):
         """Ping all sites"""
@@ -154,8 +156,8 @@ if __name__ == "__main__":
     # Load sites from .env file
     scheduler.load_sites_from_env()
     
-    # Add job to ping every 60 seconds
-    scheduler.add_job(60)
+    # Add job to ping every 10 minutes (600 seconds)
+    scheduler.add_job(600)
     
-    # Start scheduler
+    # Start the scheduler
     scheduler.run()
