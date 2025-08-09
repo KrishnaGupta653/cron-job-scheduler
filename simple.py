@@ -2,6 +2,7 @@
 import time
 import threading
 import requests
+import os
 from datetime import datetime
 
 class SimpleCronScheduler:
@@ -10,7 +11,19 @@ class SimpleCronScheduler:
         self.jobs = []
         self.running = False
     
-    def add_site(self, url):
+    def load_sites_from_env(self):
+        """Load sites from .env file"""
+        if os.path.exists('.env'):
+            with open('.env', 'r') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        if '=' in line:
+                            key, value = line.split('=', 1)
+                            if key.startswith('SITE'):
+                                self.add_site(value)
+        else:
+            print("No .env file found. Create one with SITE1=url, SITE2=url, etc.")
         """Add a site to ping"""
         if not url.startswith('http'):
             url = 'https://' + url
@@ -58,14 +71,8 @@ class SimpleCronScheduler:
 # Usage example
 if __name__ == "__main__":
     scheduler = SimpleCronScheduler()
-    
-    # Add sites to ping
-    scheduler.add_site("google.com")
-    scheduler.add_site("github.com")
-    scheduler.add_site("stackoverflow.com")
-    
-    # Add job to ping every 60 seconds
-    scheduler.add_job(60)
-    
-    # Start scheduler
+    # Load sites from .env file
+    scheduler.load_sites_from_env()
+    # Add job to ping every 10 minutes (600 seconds)
+    scheduler.add_job(600)
     scheduler.run()
