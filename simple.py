@@ -249,7 +249,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     scheduler = SimpleCronScheduler()
     scheduler.load_sites_from_env()
-    scheduler.add_job(600)
+    scheduler.add_job(840)
     
     # Start scheduler in background
     threading.Thread(target=scheduler.run, daemon=True).start()
